@@ -1,0 +1,77 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>A static page</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!--Video upload -->
+    <h1>Hello from a static page</h1>
+    <form method="POST" enctype="multipart/form-data" name="upload">
+        <input type="file" name="uploadfile[]" multiple id="file_input" accept="video/mp4,video/x-m4v,video/*">
+        <input type="submit">
+    </form>
+    <button id="form_reset">Cancel</button>
+    <div id="log"></div>
+    <div id="progress_text"></div>
+
+    <div id="progress_container">
+        <div id="progress_container_text">
+            <div id="progress_container_text_align_center">0%</div>
+        </div>
+        <div id="loading_bar"></div>
+    </div>
+
+
+
+    <script>
+        var is_sending = false
+        var form_reset = document.getElementById("form_reset")
+        var form = document.forms.namedItem("upload");
+        var file_input = document.getElementById("file_input")
+        var loading_bar = document.getElementById("loading_bar")
+        var progress_container_text_align_center = document.getElementById("progress_container_text_align_center")
+        var Output = document.getElementById("log")
+        var Req = new XMLHttpRequest()
+        Req.upload.onprogress = function (Event) {
+            progress_text.innerHTML = "Sending " + (Event.loaded / 1048576).toFixed(2) + " MB" + ' / ' + (Event.total / 1048576).toFixed(2) + " MB";
+            progress_container_text_align_center.innerHTML = ((Event.loaded / Event.total) * 100).toFixed() + "%";
+            loading_bar.style.width = (Event.loaded / Event.total) * 100 + "%";
+        }
+        form_reset.onclick = function (ev) {
+            // console.log("is sending", is_sending)
+            if (is_sending) {
+                Req.abort()
+                form.reset()
+                is_sending = false
+            }
+        }
+        form.onreset = function (ev) {
+            progress_text.innerHTML = "Cancelled";
+            progress_container_text_align_center.innerHTML = 0 + "%";
+            loading_bar.style.width = 0 + "%";
+        }
+        Req.onload = function (Event) {
+            if (Req.status == 200) {
+                Output.innerHTML = Req.response
+                file_input.value = null
+            } else {
+                Output.innerHTML = "Error " + Req.status + " occurred when trying to upload your file. " + Req.responseText;
+            }
+        };
+        form.addEventListener('submit', function (ev) {
+            var Data = new FormData(form)
+            Req.open("POST", "upload", true)
+            Req.send(Data)
+            is_sending = true
+            ev.preventDefault();
+        }, false);
+
+    </script>
+</body>
+
+
+</html>

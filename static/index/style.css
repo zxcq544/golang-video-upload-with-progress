@@ -1,0 +1,31 @@
+#progress_container {
+    width: 100px;
+    background-color: rgb(161, 161, 161);
+    height: 20px;
+    position: relative;
+}
+
+#progress_container_text {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 100%;
+}
+
+#progress_container_text_align_center {
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+
+#loading_bar {
+    width: 0%;
+    height: 20px;
+    background-color: rgb(58, 166, 255);
+}
+
+form {
+    display: inline-block;
+}
